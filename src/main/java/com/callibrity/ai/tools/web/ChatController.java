@@ -1,7 +1,10 @@
 package com.callibrity.ai.tools.web;
 
+import lombok.val;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
+import org.springframework.ai.openai.OpenAiChatOptions;
+import org.springframework.ai.openai.api.OpenAiApi;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,7 +18,11 @@ public class ChatController {
     private final ChatTools tools;
 
     public ChatController(ChatClient.Builder builder, ChatTools tools) {
+        final var options = OpenAiChatOptions.builder()
+                .toolChoice(OpenAiApi.ChatCompletionRequest.ToolChoiceBuilder.AUTO)
+                .build();
         this.chatClient = builder
+                .defaultOptions(options)
                 .defaultAdvisors(new SimpleLoggerAdvisor())
                 .build();
         this.tools = tools;
